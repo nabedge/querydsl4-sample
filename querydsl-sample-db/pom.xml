@@ -1,0 +1,130 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- clean install dbunit:operation -->
+
+	<groupId>com.example.querydsl4-sample</groupId>
+	<artifactId>querydsl-sample-db</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<encoding>UTF-8</encoding>
+		<project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+		<querydsl.version>4.0.9</querydsl.version>
+		<h2database.version>1.4.181</h2database.version>
+		<jdbcUrl>jdbc:h2:file:${basedir}/target/tmpdb</jdbcUrl>
+		<jdbcUser>sa</jdbcUser>
+        <jdbcPassword></jdbcPassword>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-sql</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-sql-codegen</artifactId>
+			<version>${querydsl.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2database.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${encoding}</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sql-maven-plugin</artifactId>
+				<version>1.5</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.h2database</groupId>
+						<artifactId>h2</artifactId>
+						<version>${h2database.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<driver>org.h2.Driver</driver>
+                    <url>${jdbcUrl}</url>
+					<username>${jdbcUser}</username>
+					<password>${jdbcPassword}</password>
+					<encoding>UTF-8</encoding>
+					<autocommit>true</autocommit>
+				</configuration>
+				<executions>
+					<execution>
+						<id>create-tables</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<orderFile>ascending</orderFile>
+							<fileset>
+								<basedir>${basedir}/src/main/resources/sql/</basedir>
+								<includes>
+									<include>00_init.sql</include>
+								</includes>
+							</fileset>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-maven-plugin</artifactId>
+				<version>${querydsl.version}</version>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>export</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jdbcDriver>org.h2.Driver</jdbcDriver>
+                    <jdbcUrl>${jdbcUrl}</jdbcUrl>
+					<jdbcUser>${jdbcUser}</jdbcUser>
+					<jdbcPassword>${jdbcPassword}</jdbcPassword>
+					<!-- <schemaPattern> </schemaPattern> -->
+					<packageName>com.example.db.querydsl.gen</packageName>
+					<beanInterfaces>
+						<beanInterface>java.io.Serializable</beanInterface>
+					</beanInterfaces>
+					<beanAddToString>true</beanAddToString>
+					<exportBeans>true</exportBeans>
+					<targetFolder>${project.basedir}/target/generated-sources/java</targetFolder>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.h2database</groupId>
+						<artifactId>h2</artifactId>
+						<version>${h2database.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
