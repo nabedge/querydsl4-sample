@@ -35,13 +35,6 @@ public class Config {
     }
 
     @Bean
-    public JdbcTemplate jdbcTempate() {
-        JdbcTemplate template = new JdbcTemplate();
-        template.setDataSource(dataSource());
-        return template;
-    }
-
-    @Bean
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
     }
@@ -58,6 +51,13 @@ public class Config {
     public SQLQueryFactory sqlQueryFactory() {
         Provider<Connection> provider = new SpringConnectionProvider(dataSource());
         return new SQLQueryFactory(querydslConfiguration(), provider);
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTempate() {
+        JdbcTemplate template = new JdbcTemplate();
+        template.setDataSource(dataSource());
+        return template;
     }
 
 }

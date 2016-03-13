@@ -20,6 +20,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.Assert.assertNull;
@@ -114,7 +117,18 @@ public class ReadTest {
     }
 
     @Test
-    public void select21() {
+    public void select_between() {
+        SQLQuery<Book> query = sqlQueryFactory.select(qBook);
+        query.from(qBook);
+        java.sql.Date from = Date.valueOf("1980-01-01");
+        java.sql.Date to = Date.valueOf("2000-01-01");
+        query.where(qBook.publishDate.between(from, to));
+        List<Book> books = query.fetch();
+        books.forEach(book -> log.info(book.toString()));
+    }
+
+    @Test
+    public void select_between2() {
         SQLQuery<Book> query = sqlQueryFactory.select(qBook);
         query.from(qBook);
         // The case that you need special dialect.
@@ -126,7 +140,7 @@ public class ReadTest {
     }
 
     @Test
-    public void select22() {
+    public void select_where_join() {
         SQLQuery<BookAndAuthorDTO> query = sqlQueryFactory.select(
                 Projections.bean(BookAndAuthorDTO.class,
                         qBook.isbn,
@@ -148,7 +162,7 @@ public class ReadTest {
     }
 
     @Test
-    public void select23() {
+    public void select_inner_join() {
         SQLQuery<BookAndAuthorDTO> query = sqlQueryFactory.select(
                 Projections.bean(BookAndAuthorDTO.class,
                         qBook.isbn,
