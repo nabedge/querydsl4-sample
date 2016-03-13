@@ -70,6 +70,7 @@ public class ReadTest {
         List<Book> books = sqlQueryFactory
                 .select(qBook)
                 .from(qBook)
+                .orderBy(qBook.publishDate.asc())
                 .fetch();
         books.forEach(book -> log.info(book.toString()));
     }
@@ -137,12 +138,12 @@ public class ReadTest {
         query.orderBy(qBook.publishDate.asc(), qAuthor.id.asc());
 
         List<BookAndAuthorDTO> list = query.fetch();
-        list.stream().forEach(e -> {
+        list.stream().forEach(dto -> {
             log.debug("-------");
-            log.debug("isbn:{}", e.getIsbn());
-            log.debug("title:{}", e.getTitle());
-            log.debug("author:{}", e.getAuthorName());
-            log.debug("publishDate:{}", e.getPublishDate());
+            log.debug("isbn: {}", dto.getIsbn());
+            log.debug("title: {}", dto.getTitle());
+            log.debug("author: {}", dto.getAuthorName());
+            log.debug("publishDate: {}", dto.getPublishDate());
         });
     }
 
@@ -162,10 +163,10 @@ public class ReadTest {
         List<BookAndAuthorDTO> list = query.fetch();
         list.stream().forEach(e -> {
             log.debug("---------");
-            log.debug("isbn:{}", e.getIsbn());
-            log.debug("title:{}", e.getTitle());
-            log.debug("author:{}", e.getAuthorName());
-            log.debug("publishDate:{}", e.getPublishDate());
+            log.debug("isbn: {}", e.getIsbn());
+            log.debug("title: {}", e.getTitle());
+            log.debug("author: {}", e.getAuthorName());
+            log.debug("publishDate: {}", e.getPublishDate());
         });
     }
 
