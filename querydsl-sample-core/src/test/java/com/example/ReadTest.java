@@ -37,12 +37,21 @@ public class ReadTest {
     protected SQLQueryFactory sqlQueryFactory;
 
     @Test
-    public void simpleFetchOne() {
+    public void simpleFetch() {
         Book book = sqlQueryFactory
                 .select(qBook)
                 .from(qBook)
                 .where(qBook.isbn.eq("001-0000000001"))
                 .fetchOne();
+        log.info(book.toString());
+    }
+
+    @Test
+    public void simpleFetch2() {
+        SQLQuery<Book> query = sqlQueryFactory.select(qBook);
+        query.from(qBook);
+        query.where(qBook.isbn.eq("001-0000000001"));
+        Book book = query.fetchOne();
         log.info(book.toString());
     }
 

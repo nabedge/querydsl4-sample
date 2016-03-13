@@ -9,11 +9,13 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { Config.class })
@@ -25,6 +27,9 @@ public class CreateTest {
 
     @Autowired
     protected SQLQueryFactory sqlQueryFactory;
+
+    @Autowired
+    protected JdbcTemplate jdbcTemplate;
 
     // =======================================================
     @Test
@@ -51,4 +56,28 @@ public class CreateTest {
                 .set(qBook.publishDate, publishDate);
         insert.execute();
     }
+
+    @Test
+    @Transactional
+    public void multiple_ORMapper() {
+
+        // insert by jdbcTemplate
+        String insertSql = "insert into book (isbn,title,author_id,publish_date) " +
+                "values ('001-0000000003', 'TThe Hound of the Baskervilles', 1, '1901-01-01')";
+        jdbcTemplate.execute(insertSql);
+
+        // update the above record by QueryDSL
+        sqlQueryFactory
+                .update(qBook)
+                .set(qBook.title, "The Hound of the Baskervilles")
+                .where(qBook.isbn.eq("001-0000000003"))
+                .execute();
+
+        // select by jdbcTemplate
+        String selectSql = "select isbn from book where isbn='001-0000000003'";
+        Map<String, Object> result = jdbcTemplate.queryForMap(selectSql);
+        log.info(result.toString());
+
+    }
+
 }
