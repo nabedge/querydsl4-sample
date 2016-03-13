@@ -4,6 +4,7 @@ import com.example.db.querydsl.gen.Author;
 import com.example.db.querydsl.gen.Book;
 import com.example.db.querydsl.gen.QAuthor;
 import com.example.db.querydsl.gen.QBook;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLBindings;
@@ -53,6 +54,15 @@ public class ReadTest {
         query.where(qBook.isbn.eq("001-0000000001"));
         Book book = query.fetchOne();
         log.info(book.toString());
+    }
+
+    @Test
+    public void simpleFetch3() {
+        SQLQuery<Tuple> query = sqlQueryFactory.select(qBook.isbn, qBook.title);
+        query.from(qBook);
+        query.where(qBook.isbn.eq("001-0000000001"));
+        Tuple tuple = query.fetchOne();
+        log.info("isbn = {}, title = {}", tuple.get(qBook.isbn), tuple.get(qBook.title));
     }
 
     @Test
