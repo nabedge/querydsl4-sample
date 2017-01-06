@@ -21,8 +21,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.Assert.assertNull;
@@ -57,6 +55,9 @@ public class ReadTest {
         query.where(qBook.isbn.eq("001-0000000001"));
         Book book = query.fetchOne();
         log.info(book.toString());
+
+        SQLBindings sqlBindings = query.getSQL();
+        log.info("getSQL() = {}", sqlBindings.getSQL());
     }
 
     @Test
